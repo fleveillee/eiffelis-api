@@ -1,0 +1,6 @@
+{
+  "name" : "fleveillee/eiffelis",
+  "autoload":{
+    "psr-4": {"eiffelis\\": "src/"}
+  }
+}
