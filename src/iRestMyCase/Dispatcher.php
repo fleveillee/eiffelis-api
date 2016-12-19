@@ -6,7 +6,7 @@
  * Time: 23:06
  */
 
-namespace eiffelis;
+namespace iRestMyCase;
 
 
 class Dispatcher

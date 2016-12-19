@@ -6,7 +6,7 @@
  * Time: 00:13
  */
 
-namespace eiffelis;
+namespace iRestMyCase;
 
 
 class ModelGenerator

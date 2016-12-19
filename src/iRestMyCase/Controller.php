@@ -6,7 +6,7 @@
  * Time: 23:53
  */
 
-namespace eiffelis;
+namespace iRestMyCase;
 
 
 class Controller
