@@ -6,7 +6,7 @@
  * Time: 00:01
  */
 
-namespace iRestMyCase\Models;
+namespace iRestMyCase\Core\Models;
 
 
 class User

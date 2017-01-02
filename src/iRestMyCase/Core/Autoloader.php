@@ -1,6 +1,6 @@
 <?php
 
-namespace iRestMyCase;
+namespace iRestMyCase\Core;
 
 class Autoloader{
      private static $searchPath;

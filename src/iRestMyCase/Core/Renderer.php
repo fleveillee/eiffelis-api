@@ -1,8 +1,8 @@
 <?php
 
-namespace iRestMyCase;
+namespace iRestMyCase\Core;
 
-use iRestMyCase\Models\HttpResponse;
+use iRestMyCase\Core\Models\HttpResponse;
 
 class Renderer{
 
@@ -27,6 +27,13 @@ class Renderer{
           }
           ob_flush();
           flush();
+     }
+
+     public static function renderHttpErrorResponse($errorCode = 500, $errorMessage){
+          $httpResponse = new HttpResponse();
+          $httpResponse->statusCode($errorCode);
+          $httpResponse->messageBody("Http Error $errorCode: $errorMessage");
+          self::renderHttpResponse($httpResponse);
      }
 
 }

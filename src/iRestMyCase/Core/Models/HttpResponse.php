@@ -1,6 +1,6 @@
 <?php
 
-namespace iRestMyCase\Models;
+namespace iRestMyCase\Core\Models;
 
 class HttpResponse
 {

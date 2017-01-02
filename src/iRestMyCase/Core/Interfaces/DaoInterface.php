@@ -1,7 +1,7 @@
 <?php
 
 
-namespace iRestMyCase\Interfaces;
+namespace iRestMyCase\Core\Interfaces;
 
 interface DaoInterface{
 
@@ -13,6 +13,8 @@ interface DaoInterface{
      public function update($model);
 
      public function delete($model);
+
+     public function getModels();
 
 
 }

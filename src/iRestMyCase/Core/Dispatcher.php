@@ -6,7 +6,7 @@
  * Time: 23:06
  */
 
-namespace iRestMyCase;
+namespace iRestMyCase\Core;
 
 
 class Dispatcher
