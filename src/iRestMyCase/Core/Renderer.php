@@ -8,12 +8,13 @@ class Renderer{
 
      public static function renderHttpResponse(HttpResponse $httpResponse)
      {
-          if($httpResponse->headers() !== null){
-               for($i=0; $i<count($httpResponse->headers()); $i++){
+	     $httpHeaders = $httpResponse->headers();
+          if($httpHeaders !== null){
+               for($i=0; $i<count($httpHeaders); $i++){
                     if($i=0){
-                         header($value[$i]);
+                         header($httpHeaders[$i]);
                     }else{
-                         header($value[$i], false);
+                         header($httpHeaders[$i], false);
                     }
                }
           }

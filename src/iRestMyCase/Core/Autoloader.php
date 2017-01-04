@@ -5,16 +5,17 @@ namespace iRestMyCase\Core;
 class Autoloader{
      private static $searchPath;
     /**
-     * Enregistre notre autoloader
+     * Register autoloader
+     * @param string $searchPath
      */
-    static function register($searchPath){
+    static function register(string $searchPath){
           self::$searchPath = $searchPath;
           spl_autoload_register(array(__CLASS__, 'autoload'));
     }
 
     /**
-     * Inclue le fichier correspondant à notre classe
-     * @param $class string Le nom de la classe à charger
+     * Autoload Class
+     * @param $class string Class Name
      */
     static function autoload($class){
 

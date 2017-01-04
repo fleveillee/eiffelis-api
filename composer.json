@@ -1,5 +1,6 @@
 {
   "name" : "fleveillee/eiffelis",
+  "license": "Apache-2.0",
   "autoload":{
     "psr-4": {"eiffelis\\": "src/"}
   }

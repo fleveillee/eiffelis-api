@@ -7,74 +7,71 @@ use Exception;
 
 use iRestMyCase\Core\DAO\MySQL;
 use iRestMyCase\Core\Models\Config;
-use iRestMyCase\ModelGenerator\Models\TableDesc;
 
-class Utilities{
+/**
+ * Class Utilities
+ * @package iRestMyCase\ModelGenerator
+ */
+class Utilities
+{
+	/**
+	 * Generates a PHP class model instance from a MySQL schema table
+	 * @param MySQL $dao
+	 * @param $modelName
+	 * @param $tableName
+	 */
+	public static function generateModelFromMySQL(MySQL $dao, string $modelName, string $tableName)
+	{
+		$tableDesc = $dao->getTableDesc($tableName);
 
-     public static function generateModelFromMySQL($dao, $modelName, $tableName){
+		$ModelGenerator = new ModelGenerator($tableName, $tableDesc->columns());
 
-          $tableDesc = $dao->getTableDesc($tableName);
-
-          $ModelGenerator = new ModelGenerator($tableName, $tableDesc->columns());
-
-          $mySqlConfig = Config::getDao('MySQL');
-
-          $file = self::createFile($tableName,  $mySqlConfig["schema"]);
-          echo "\t...Creating Class...\n";
-          fwrite($file, $ModelGenerator->initClass());
-          echo "\t...Adding Class Properties...\n";
-          fwrite($file, $ModelGenerator->classProperties($tableDesc->columns()));
-          echo "\t...Adding Class Methods...\n";
-          fwrite($file, $ModelGenerator->classMethods($tableDesc->columns()));
-          echo "\t...Closing Class...\n";
-          fwrite($file, $ModelGenerator->closeClass());
-          fclose($file);
-          echo "Complete!\n";
-     }
+		$file = self::createFile($modelName);
+		$fileContent = $ModelGenerator->initClass();
+		$fileContent .= $ModelGenerator->classProperties($tableDesc->columns());
+		$fileContent .= $ModelGenerator->classMethods($tableDesc->columns());
+		$fileContent .= $ModelGenerator->closeClass();
+		fwrite($file, $fileContent);
+		fclose($file);
+	}
 
 
+	/**
+	 * Dispatcher for Generating a PHP class Model based on its corresponding DAO
+	 * @param $dao
+	 * @param $modelName
+	 * @param $key
+	 * @throws Exception
+	 */
+	public static function generateModel($dao, $modelName, $key)
+	{
 
-     public static function generateModel($dao, $modelName, $key){
+		if ($dao instanceof MySQL) {
+			self::generateModelFromMySQL($dao, $modelName, $key);
+		} else {
+			throw new Exception("Unknow DAO for $modelName");
+		}
 
-          if($dao instanceof MySQL){
-               self::generateModelFromMySQL($dao, $modelName, $key);
-          }
-          else{
-               throw new Exception("Unknow DAO for $model");
-          }
+	}
 
-     }
+	/**
+	 * Creates a physical PHP file for the Generated Model
+	 * @param $modelName
+	 * @return resource
+	 */
+	public static function createFile($modelName)
+	{
+		$mySqlConfig = Config::getDao('MySQL');
 
-     public static function createFile($tableName, $schema){
+		$filePath = $mySqlConfig["outputFolder"];
+		$fileName = $modelName . ".php";
 
-     	if(strpos($tableName, 'v_') === 0 ){
-     		$filename = substr($tableName, 2);
-     	}
-     	else{
-     		$filename = $tableName;
-     	}
+		if (!file_exists($filePath)) {
+			mkdir($filePath, 0755, true);
+		}
 
-     	$dirname = explode('_', $filename);
-
-     	for($i=0; $i<count($dirname); $i++){
-     		$dirname[$i] = ucfirst($dirname[$i]);
-     	}
-
-     	$filename = array_pop($dirname);
-
-     	if(!empty($dirname) && count($dirname)>0){
-     		$dirname = implode('/', $dirname);
-     		if (!file_exists($dirname)) {
-     			mkdir($dirname, 0755, true);
-     		}
-     		$filename = $dirname .'/'. $filename;
-     	}
-
-     	$filename .= '.php';
-     	echo "Generating $filename \nUsing $schema.$tableName\n";
-     	return fopen($filename, 'w');
-     }
-
+		return fopen($filePath. $fileName, 'w');
+	}
 
 
 }

@@ -2,103 +2,184 @@
 
 namespace iRestMyCase\Core\Models;
 
+/**
+ * Class Config
+ * @package iRestMyCase\Core\Models
+ */
 class Config
 {
-     static private $environmentType = "prod";
-     static private $librairiesRelativePath = "../src/";
-     static private $rootNamespace = 'iRestMyCase';
-     static private $defaultDao = "MySQL";
-     static private $dao;
-     static private $models;
+	/** @var string **/
+	static private $environmentType = "prod";
+	/** @var string **/
+	static private $librairiesRelativePath = "../src/";
+	/** @var string **/
+	static private $rootNamespace = 'iRestMyCase';
+	/** @var string **/
+	static private $defaultDao = "MySQL";
+	/** @var array **/
+	static private $dao;
+	/** @var array **/
+	static private $models;
 
-     public static function load(?array $config = null){
+	/**
+	 * load
+	 * @param array|null|null $config Configuration Array
+	 */
+	public static function load(?array $config = null)
+	{
+		if (isset($config['generic'])) {
+			self::loadGenericConfig($config['generic']);
+		}
 
-          if(isset($config['generic'])){
-               self::loadGenericConfig($config['generic']);
-          }
+		if (isset($config['dao'])) {
+			self::dao($config['dao']);
+		}
 
-          if(isset($config['dao'])){
-               self::dao($config['dao']);
-          }
+		if (isset($config['models'])) {
+			self::models($config['models']);
+		}
+	}
 
-          if(isset($config['models'])){
-               self::models($config['models']);
-          }
+	/**
+	 * loadGenericConfig
+	 * @param array $genericConfig
+	 */
+	private static function loadGenericConfig(array $genericConfig)
+	{
+		if (isset($genericConfig['environmentType'])) {
+			self::$environmentType = $genericConfig['environmentType'];
+		}
+		if (isset($genericConfig['librairiesRelativePath'])) {
+			self::$librairiesRelativePath = $genericConfig['librairiesRelativePath'];
+		}
+		if (isset($genericConfig['rootNamespace'])) {
+			self::$rootNamespace = $genericConfig['rootNamespace'];
+		}
+		if (isset($genericConfig['defaultDao'])) {
+			self::$defaultDao = $genericConfig['defaultDao'];
+		}
+		if (isset($genericConfig['librairiesRelativePath'])) {
+			self::$librairiesRelativePath = $genericConfig['librairiesRelativePath'];
+		}
+
+	}
+
+	/**
+	 * @param null|string|null $value
+	 * @return null|string
+	 */
+	public static function environmentType(?string $value = null): ?string
+	{
+		if (isset($value)) {
+			self::$environmentType = $value;
+			self::setPhpDebugOptions(self::$environmentType);
+		}
+
+		return self::$environmentType;
+	}
+
+	/**
+	 * environmentIsDev
+	 * @return bool
+	 */
+	public static function environmentIsDev(): bool
+	{
+		return self::environmentType() == 'dev';
+	}
+
+	/**
+	 * Set PHP Debug Options
+	 * @param string $environmentType
+	 */
+	public static function setPhpDebugOptions(string $environmentType)
+	{
+		if ($environmentType == 'dev') {
+			ini_set('display_errors', 1);
+			ini_set('display_startup_errors', 1);
+			error_reporting(E_ALL);
+		}
+	}
+
+	/**
+	 * Get/Set Librairies Relative Path
+	 * @param null|string|null $value
+	 * @return null|string
+	 */
+	public static function librariesRelativePath(?string $value = null): ?string
+	{
+		if (isset($value)) {
+			self::$librairiesRelativePath = $value;
+		}
+
+		return self::$librairiesRelativePath;
+	}
+
+	/**
+	 * Get/Set Root Namespace
+	 * @param null|string|null $value
+	 * @return null|string
+	 */
+	public static function rootNamespace(?string $value = null): ?string
+	{
+		if (isset($value)) {
+			self::$rootNamespace = $value;
+		}
+
+		return self::$rootNamespace;
+	}
 
 
-     }
+	/**
+	 * Get/Set Default DAO
+	 * @param null|string $value
+	 * @return null|string
+	 */
+	public static function defaultDao(?string $value = null): ?string
+	{
+		if (isset($value)) {
+			self::$defaultDao = $value;
+		}
 
-     private static function loadGenericConfig(array $genericConfig) {
-          if(isset($genericConfig['environmentType'])){
-               self::$environmentType = $genericConfig['environmentType'];
-          }
-          if(isset($genericConfig['librairiesRelativePath'])){
-               self::$librairiesRelativePath = $genericConfig['librairiesRelativePath'];
-          }
-          if(isset($genericConfig['rootNamespace'])){
-               self::$rootNamespace = $genericConfig['rootNamespace'];
-          }
-          if(isset($genericConfig['defaultDao'])){
-               self::$defaultDao = $genericConfig['defaultDao'];
-          }
-          if(isset($genericConfig['librairiesRelativePath'])){
-               self::$librairiesRelativePath = $genericConfig['librairiesRelativePath'];
-          }
+		return self::$defaultDao;
+	}
 
-     }
+	/**
+	 * Get/Set DAO Settings array
+	 * @param array|null|null $value
+	 * @return array|null
+	 */
+	public static function dao(?array $value = null): ?array
+	{
+		if (isset($value)) {
+			self::$dao = $value;
+		}
 
-     public static function environmentType(?string $value = null) : ?string{
-          if(isset($value)){
-               self::$environmentType = $value;
-               self::setDebugOptions(self::$environmentType);
-          }
-          return self::$environmentType;
-     }
+		return self::$dao;
+	}
 
-     public static function environmentIsDev() : bool{
-          return self::environmentType() == 'dev';
-     }
+	/**
+	 * Get a specific DAO's settings array
+	 * @param string $daoName
+	 * @return array
+	 */
+	public static function getDao(string $daoName): array
+	{
+		return empty(self::$dao[$daoName]) ? null : self::$dao[$daoName];
+	}
 
-     public static function setDebugOptions(string $environmentType){
-          if( $environmentType == 'dev'){
-               ini_set('display_errors', 1);
-               ini_set('display_startup_errors', 1);
-               error_reporting(E_ALL);
-          }
-     }
+	/**
+	 * Get/Set Models Settings array
+	 * @param array|null|null $value
+	 * @return array|null
+	 */
+	public static function models(?array $value = null): ?array
+	{
+		if (isset($value)) {
+			self::$models = $value;
+		}
 
-     public static function librariesRelativePath(?string $value = null) : ?string{
-          if(isset($value)){
-               self::$librairiesRelativePath = $value;
-          }
-          return self::$librairiesRelativePath;
-     }
-
-     public static function rootNamespace(?string $value = null) : ?string{
-          if(isset($value)){
-               self::$rootNamespace = $value;
-          }
-          return self::$rootNamespace;
-     }
-
-     public static function dao(?array $value = null) : ?array{
-          if(isset($value)){
-               self::$dao = $value;
-          }
-          return self::$dao;
-     }
-
-     public function getDao(string $daoName): array
-     {
-          return empty(self::$dao[$daoName])? null: self::$dao[$daoName];
-     }
-
-     public static function models(?array $value = null) : ?array{
-          if(isset($value)){
-               self::$models = $value;
-          }
-          return self::$models;
-     }
+		return self::$models;
+	}
 
 
 }

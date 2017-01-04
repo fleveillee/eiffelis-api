@@ -14,7 +14,7 @@ interface DaoInterface{
 
      public function delete($model);
 
-     public function getModels();
+     public function getModelNames();
 
 
 }

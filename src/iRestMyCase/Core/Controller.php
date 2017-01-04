@@ -8,12 +8,19 @@
 
 namespace iRestMyCase\Core;
 
-use Exception;
+use iRestMyCase\Core\Interfaces\DaoInterface;
 use iRestMyCase\Core\Models\Config;
 
+/**
+ * Class Controller
+ * @package iRestMyCase\Core
+ */
 class Controller
 {
 
+	/**
+	 * Default Root Index Action
+	 */
     public function index()
     {
         if(Config::environmentIsDev()){
@@ -26,60 +33,14 @@ class Controller
     }
 
 
-    public function attemptRestAction($splitUri)
-    {
-        $rootNamespace = Config::rootNamespace();
-        $modelName = $splitUri[0];
-        $className = $rootNamespace . '\\Models\\'. $modelName;
-        //var_dump($className);
-        //echo 'will check@!';
-        if(class_exists($className)){
-            //echo 'We in !';
-
-            try{
-                $dao = DAO::getDAO($modelName);
-            }
-            catch(Exception $exception){
-                Renderer::renderHttpErrorResponse(500, $exception->getMessage());
-                return true;
-            }
-
-            $model = new $className();
-
-            self::processAction($model, $dao);
-            echo 'AOK';
-        }else{
-            throw new Exception("Model Not Found \"$modelName\"", 404);
-        }
-
-    }
-
-
-    public function attemptModuleAction($splitUri)
-    {
-        $rootNamespace = Config::rootNamespace();
-        $moduleName = $splitUri[0];
-        $moduleControllername = $rootNamespace . '\\'. $moduleName . '\\Controller';
-        //var_dump($className);
-        //echo 'will check@!';
-        if(class_exists($moduleControllername)){
-            $action = $splitUri[1];
-            if(empty($action)){
-                $action = 'index';
-            }
-
-            $controller = new $moduleControllername;
-            $controller->$action();
-            return true;
-        }
-        return false;
-    }
-
-
-    private function processAction($model, $dao)
+	/**
+	 * Run a Rest service action
+	 * @param object       $model
+	 * @param DaoInterface $dao
+	 */
+    public function restAction(object $model, DaoInterface $dao)
     {
         $httpMethod = $_SERVER['REQUEST_METHOD'];
-        //var_dump($httpMethod);
 
         switch ($httpMethod) {
             case 'PUT':
@@ -100,7 +61,7 @@ class Controller
                 break;
             case 'OPTIONS':
                 // TODO: send options response
-                Renderer::renderHttpResponse(501, "Feature Not Implemented Yet");
+                Renderer::renderHttpErrorResponse(501, "Feature Not Implemented Yet");
                 break;
             default:
                 Renderer::renderHttpErrorResponse(405, "Method Not Allowed");
@@ -109,10 +70,13 @@ class Controller
 
     }
 
+	/**
+	 * Render View
+	 * @param $viewName
+	 */
     private function render($viewName)
     {
         include('views/' . $viewName . '.php');
     }
-
 
 }
