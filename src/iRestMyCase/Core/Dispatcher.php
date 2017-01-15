@@ -43,7 +43,7 @@ class Dispatcher
 				self::attemptRestAction($splitUri);
 			} catch (Exception $exception) {
 
-				if (self::attemptModuleAction($splitUri)) {
+				if (!self::attemptModuleAction($splitUri)) {
 					Renderer::renderHttpErrorResponse($exception->getCode(), $exception->getMessage());
 				}
 			}
