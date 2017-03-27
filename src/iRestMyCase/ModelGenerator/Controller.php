@@ -21,12 +21,11 @@ class Controller
 	public function index()
 	{
 		$params = ["daos" => Config::dao()];
-
 		if (isset($_POST["dao"])) {
 			$daoName = $_POST["dao"];
 			try {
 				$dao = DAO::getDAO($daoName);
-				$params["models"] = $dao->getModels();
+				$params["models"] = $dao->getModelNames();
 				$params["selectedDao"] = $daoName;
 			} catch (Exception $exception) {
 				Renderer::renderHttpErrorResponse(404, $exception->getMessage());
@@ -38,7 +37,6 @@ class Controller
 		if (isset($_POST["models"]) && isset($dao)) {
 			$models = $_POST["models"];
 			$params["selectedModels"] = $models;
-			var_dump($models);
 
 			//Utilities::generateModelsFromMySQLTables();
 

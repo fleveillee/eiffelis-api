@@ -8,18 +8,20 @@ namespace iRestMyCase\Core\Models;
  */
 class Config
 {
-	/** @var string **/
+	/** @var string * */
 	static private $environmentType = "prod";
-	/** @var string **/
+	/** @var string * */
 	static private $librairiesRelativePath = "../src/";
-	/** @var string **/
+	/** @var string * */
 	static private $rootNamespace = 'iRestMyCase';
-	/** @var string **/
+	/** @var string * */
 	static private $defaultDao = "MySQL";
-	/** @var array **/
+	/** @var array * */
 	static private $dao;
-	/** @var array **/
+	/** @var array * */
 	static private $models;
+	/** @var array * */
+	static private $modules;
 
 	/**
 	 * load
@@ -27,17 +29,17 @@ class Config
 	 */
 	public static function load(?array $config = null)
 	{
+
 		if (isset($config['generic'])) {
 			self::loadGenericConfig($config['generic']);
 		}
 
-		if (isset($config['dao'])) {
-			self::dao($config['dao']);
+		foreach ($config as $key => $params) {
+			if (method_exists(get_class(), $key)) {
+				self::$key($params);
+			}
 		}
 
-		if (isset($config['models'])) {
-			self::models($config['models']);
-		}
 	}
 
 	/**
@@ -162,7 +164,7 @@ class Config
 	 * @param string $daoName
 	 * @return array
 	 */
-	public static function getDao(string $daoName): array
+	public static function getDao(string $daoName): ?array
 	{
 		return empty(self::$dao[$daoName]) ? null : self::$dao[$daoName];
 	}
@@ -181,5 +183,28 @@ class Config
 		return self::$models;
 	}
 
+	/**
+	 * Get/Set Modules Settings array
+	 * @param array|null|null $value
+	 * @return array|null
+	 */
+	public static function modules(?array $value = null): ?array
+	{
+		if (isset($value)) {
+			self::$modules = $value;
+		}
+
+		return self::$modules;
+	}
+
+	/**
+	 * Get a specific module's settings array
+	 * @param string $moduleName
+	 * @return array
+	 */
+	public static function getModule(string $moduleName): ?array
+	{
+		return empty(self::$modules[$moduleName]) ? null : self::$modules[$moduleName];
+	}
 
 }

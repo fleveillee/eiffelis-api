@@ -17,8 +17,8 @@ class Utilities
 	/**
 	 * Generates a PHP class model instance from a MySQL schema table
 	 * @param MySQL $dao
-	 * @param $modelName
-	 * @param $tableName
+	 * @param       $modelName
+	 * @param       $tableName
 	 */
 	public static function generateModelFromMySQL(MySQL $dao, string $modelName, string $tableName)
 	{
@@ -58,19 +58,22 @@ class Utilities
 	 * Creates a physical PHP file for the Generated Model
 	 * @param $modelName
 	 * @return resource
+	 * @throws Exception
 	 */
 	public static function createFile($modelName)
 	{
-		$mySqlConfig = Config::getDao('MySQL');
+		$modelGeneratorConfig = Config::getModule('ModelGenerator');
 
-		$filePath = $mySqlConfig["outputFolder"];
+		$filePath = $modelGeneratorConfig["outputFolder"];
 		$fileName = $modelName . ".php";
 
 		if (!file_exists($filePath)) {
-			mkdir($filePath, 0755, true);
+			if (!mkdir($filePath, 0755, true)) {
+				throw new Exception("Unable to create folder for writing generated Models");
+			}
 		}
 
-		return fopen($filePath. $fileName, 'w');
+		return fopen($filePath . $fileName, 'w');
 	}
 
 

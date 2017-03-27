@@ -30,6 +30,7 @@ class Dispatcher
 	{
 		$controller = new Controller();
 
+		// Check if we are at @Root URI
 		if (strlen($URI) == 0 || $URI == '/') {
 			$controller->index();
 		} elseif (strlen($URI) > 0) {

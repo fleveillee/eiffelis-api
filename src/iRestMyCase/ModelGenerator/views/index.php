@@ -5,7 +5,7 @@
 <body>
 <label for="selectDao">Select a DAO</label>
 <form method="POST">
-	<? if (isset($daos)): ?>
+	<? if (!empty($daos)): ?>
         <select name="dao" id="selectDao">
 			<? foreach ($daos as $key => $config): ?>
                 <option<?= (isset($selectedDao) && $selectedDao == $key ? ' selected="selected"' : ''); ?>><?= $key; ?></option>
