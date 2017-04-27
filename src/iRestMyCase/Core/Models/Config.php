@@ -11,9 +11,7 @@ class Config
 	/** @var string * */
 	static private $environmentType = "prod";
 	/** @var string * */
-	static private $librairiesRelativePath = "../src/";
-	/** @var string * */
-	static private $rootNamespace = 'iRestMyCase';
+	static private $appName = 'iRestMyCase';
 	/** @var string * */
 	static private $defaultDao = "MySQL";
 	/** @var array * */
@@ -51,17 +49,11 @@ class Config
 		if (isset($genericConfig['environmentType'])) {
 			self::$environmentType = $genericConfig['environmentType'];
 		}
-		if (isset($genericConfig['librairiesRelativePath'])) {
-			self::$librairiesRelativePath = $genericConfig['librairiesRelativePath'];
-		}
-		if (isset($genericConfig['rootNamespace'])) {
-			self::$rootNamespace = $genericConfig['rootNamespace'];
+		if (isset($genericConfig['appName'])) {
+			self::$appName = $genericConfig['appName'];
 		}
 		if (isset($genericConfig['defaultDao'])) {
 			self::$defaultDao = $genericConfig['defaultDao'];
-		}
-		if (isset($genericConfig['librairiesRelativePath'])) {
-			self::$librairiesRelativePath = $genericConfig['librairiesRelativePath'];
 		}
 
 	}
@@ -103,31 +95,17 @@ class Config
 	}
 
 	/**
-	 * Get/Set Librairies Relative Path
-	 * @param null|string|null $value
-	 * @return null|string
-	 */
-	public static function librariesRelativePath(?string $value = null): ?string
-	{
-		if (isset($value)) {
-			self::$librairiesRelativePath = $value;
-		}
-
-		return self::$librairiesRelativePath;
-	}
-
-	/**
 	 * Get/Set Root Namespace
 	 * @param null|string|null $value
 	 * @return null|string
 	 */
-	public static function rootNamespace(?string $value = null): ?string
+	public static function appName(?string $value = null): ?string
 	{
 		if (isset($value)) {
-			self::$rootNamespace = $value;
+			self::$appName = $value;
 		}
 
-		return self::$rootNamespace;
+		return self::$appName;
 	}
 
 

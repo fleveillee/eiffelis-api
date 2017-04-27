@@ -59,9 +59,9 @@ class Dispatcher
 	 */
 	public static function attemptRestAction($splitUri)
 	{
-		$rootNamespace = Config::rootNamespace();
+		$appName = Config::appName();
 		$modelName = $splitUri[0];
-		$className = $rootNamespace . '\\Models\\' . $modelName;
+		$className = $appName . '\\Models\\' . $modelName;
 
 		if (class_exists($className)) {
 			try {
@@ -85,9 +85,9 @@ class Dispatcher
 
 	public static function attemptModuleAction($splitUri)
 	{
-		$rootNamespace = Config::rootNamespace();
+		$appName = Config::appName();
 		$moduleName = $splitUri[0];
-		$moduleControllername = $rootNamespace . '\\' . $moduleName . '\\Controller';
+		$moduleControllername = $appName . '\\' . $moduleName . '\\Controller';
 		//var_dump($className);
 		//echo 'will check@!';
 		if (class_exists($moduleControllername)) {

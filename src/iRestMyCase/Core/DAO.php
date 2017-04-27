@@ -19,7 +19,7 @@ class DAO{
 
      public static function getDAO(string $daoName){
 
-          $daoFullName = Config::rootNamespace() . '\\Core\\DAO\\'. $daoName;
+          $daoFullName = Config::appName() . '\\Core\\DAO\\'. $daoName;
 
           if(!class_exists($daoFullName)){
                throw new Exception("DAO class $daoName is not found");

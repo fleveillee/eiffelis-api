@@ -23,7 +23,19 @@
                                   value="<?= $modelName; ?>"/><?= $modelName; ?></label></li>
 			<? endforeach; ?>
         </ul>
+
+		<? if (isset($languages)): ?>
+            <label for="selectLanguage">Language: </label>
+            <select name="language" id="selectLanguage">
+				<? foreach ($languages as $key => $language): ?>
+                    <option value="<?= $key; ?>"<?= (isset($selectedLanguage) && $selectedLanguage == $key ? ' selected="selected"' : ''); ?>><?= $language; ?></option>
+				<? endforeach; ?>
+            </select>
+		<? endif; ?>
+
 	<? endif; ?>
+
+
     <input type="submit" value="Submit"/>
 </form>
 </body>

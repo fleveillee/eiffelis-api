@@ -20,7 +20,15 @@ class Controller
 	 */
 	public function index()
 	{
-		$params = ["daos" => Config::dao()];
+		$params = [
+			"daos" => Config::dao(),
+			"languages" => [
+				"PHP71" => "PHP 7.1",
+				"PHP56" => "PHP 5.6"
+			]
+		];
+
+		//If DAO is selected, load model names
 		if (isset($_POST["dao"])) {
 			$daoName = $_POST["dao"];
 			try {
@@ -34,6 +42,7 @@ class Controller
 			}
 		}
 
+		// If models were selected, generate them
 		if (isset($_POST["models"]) && isset($dao)) {
 			$models = $_POST["models"];
 			$params["selectedModels"] = $models;
