@@ -65,7 +65,7 @@ class Dispatcher
 
 		if (class_exists($className)) {
 			try {
-				$dao = DAO::getDAO($modelName);
+				$dao = DAO::getDAO($className::DAO);
 			} catch (Exception $exception) {
 				Renderer::renderHttpErrorResponse(500, $exception->getMessage());
 

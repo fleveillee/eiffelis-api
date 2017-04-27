@@ -8,6 +8,9 @@
 
 namespace iRestMyCase\ModelGenerator;
 
+use iRestMyCase\Core\DAO\MySQL\TableDesc;
+use iRestMyCase\Core\Interfaces\DaoInterface;
+use iRestMyCase\Core\Models\Config;
 
 class ModelGenerator
 {
@@ -56,7 +59,7 @@ class ModelGenerator
 			for ($i = 0; $i < count($className_array); $i++) {
 				$className_array[$i] = ucfirst($className_array[$i]);
 			}
-			$this->className = implode('_', $className_array);;
+			$this->className = implode('', $className_array);;
 		}
 
 		return $this->className;
@@ -80,22 +83,49 @@ class ModelGenerator
 		return $this->extendedClassName;
 	}
 
-	public function initClass()
+	public function getClassOverture()
 	{
 		$classExtends = '';
 		if (!empty($this->extendedClassName)) {
 			$classExtends = " extends $this->extendedClassName";
 		}
 
+		$namespace = Config::appName() . '\PublicModels';
+
 		return "<?php
+namespace  $namespace;
+
+use Exception;
 
 class $this->className$classExtends
-{
-";
+{";
 
 	}
 
-	public function closeClass()
+	public function getDaoConst(DaoInterface $dao, TableDesc $tableDesc)
+	{
+		$daoName = $dao->getName();
+
+		$daoConst = "\n\tconst DAO = '$daoName';";
+
+		if ($daoName == "MySQL") {
+			$tableName = $tableDesc->tableName();
+
+			$daoConst .= "\n\tconst TABLE_NAME = '$tableName';";
+			foreach ($tableDesc->columns() as &$column) {
+
+				if ($column['Key'] == 'PRI' || strcasecmp($column['Field'], 'id') === 0) {
+					$primaryKey = $column['Field'];
+					$daoConst .= "\n\tconst PRIMARY_KEY = '$primaryKey';";
+				}
+			}
+		}
+
+		return $daoConst;
+	}
+
+
+	public function getClassClosure()
 	{
 		return "
 }
@@ -103,21 +133,16 @@ class $this->className$classExtends
 	}
 
 
-	public function classProperties($tableColumns)
+	public function getClassProperties($tableColumns)
 	{
 		$propertiesContent = "";
-		$staticProperties = "	public static \$_tableName = '" . $this->tableName . "';\n";
+		$enumConst = "";
 
 		foreach ($tableColumns as &$column) {
 
-			if ($column['Key'] == 'PRI' || strcasecmp($column['Field'], 'id') === 0) {
-				$staticProperties .= "	public static \$_primaryKey = '$column[Field]';\n";
-
-			}
-
 			if (in_array($column['ShortType'], self::$_enumTypes)) {
-				$staticProperties .= "	public static \$_$column[Field]EnumValues = [$column[EnumValuesString]];\n";
-
+				$constName = strtoupper($column['Field']) . '_ENUM_VALUES';
+				$enumConst .= "	const $constName = [$column[EnumValuesString]];\n";
 			}
 
 			$propertyValue = '';
@@ -136,11 +161,11 @@ class $this->className$classExtends
 	protected \$$column[Field]$propertyValue;";
 		}
 
-		return $staticProperties . "\n" . $propertiesContent . "\n";
+		return $enumConst . "\n" . $propertiesContent . "\n";
 	}
 
 
-	function classMethods($tableColumns)
+	function getClassMethods($tableColumns)
 	{
 		$methodsContent = "
 
@@ -165,7 +190,7 @@ class $this->className$classExtends
 				}
 			}
 			else{
-				\$this->{self::\$_primaryKey}(\$param);";
+				\$this->{self::PRIMARY_KEY}(\$param);";
 		if (!empty($this->extendedClassName)) {
 			$methodsContent .= "\n\t\t\t\t\$this->load();";
 		}
@@ -206,7 +231,7 @@ class $this->className$classExtends
 				$typecastEnd = ')';
 				$elseif .= $columnException;
 			} elseif (in_array($column['ShortType'], self::$_stringTypes)) {
-				$columnNames=[];
+				$columnNames = [];
 				foreach ($tableColumns as $tmpColumn) {
 					$columnNames[] = $tmpColumn['Field'];
 				}

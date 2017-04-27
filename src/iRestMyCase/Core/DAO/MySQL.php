@@ -39,6 +39,11 @@ class MySQL implements DaoInterface
 		$this->connect($config['server'], $config['schema'], $config['username'], $config['password']);
 	}
 
+	function getName()
+	{
+		return (new \ReflectionClass($this))->getShortName();
+	}
+
 
 	function connect($serverName, $schema, $username, $password)
 	{

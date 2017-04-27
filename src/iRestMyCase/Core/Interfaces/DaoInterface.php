@@ -3,18 +3,17 @@
 
 namespace iRestMyCase\Core\Interfaces;
 
-interface DaoInterface{
+interface DaoInterface
+{
+	public function getName();
 
+	public function create($model);
 
-     public function create($model);
+	public function read($model);
 
-     public function read($model);
+	public function update($model);
 
-     public function update($model);
+	public function delete($model);
 
-     public function delete($model);
-
-     public function getModelNames();
-
-
+	public function getModelNames();
 }

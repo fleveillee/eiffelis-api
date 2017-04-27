@@ -27,10 +27,11 @@ class Utilities
 		$ModelGenerator = new ModelGenerator($tableName, $tableDesc->columns());
 
 		$file = self::createFile($modelName);
-		$fileContent = $ModelGenerator->initClass();
-		$fileContent .= $ModelGenerator->classProperties($tableDesc->columns());
-		$fileContent .= $ModelGenerator->classMethods($tableDesc->columns());
-		$fileContent .= $ModelGenerator->closeClass();
+		$fileContent = $ModelGenerator->getClassOverture();
+		$fileContent .= $ModelGenerator->getDaoConst($dao, $tableDesc);
+		$fileContent .= $ModelGenerator->getClassProperties($tableDesc->columns());
+		$fileContent .= $ModelGenerator->getClassMethods($tableDesc->columns());
+		$fileContent .= $ModelGenerator->getClassClosure();
 		fwrite($file, $fileContent);
 		fclose($file);
 	}
