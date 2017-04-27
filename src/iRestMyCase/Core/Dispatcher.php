@@ -61,7 +61,7 @@ class Dispatcher
 	{
 		$appName = Config::appName();
 		$modelName = $splitUri[0];
-		$className = $appName . '\\Models\\' . $modelName;
+		$className = $appName . '\\PublicModels\\' . $modelName;
 
 		if (class_exists($className)) {
 			try {
