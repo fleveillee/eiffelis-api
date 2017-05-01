@@ -1,6 +1,15 @@
 {
   "name" : "fleveillee/irestmycase",
   "license": "Apache-2.0",
+  "authors": [
+    {
+      "name": "Frédéric Léveillée",
+      "email": "fleveillee@gmail.com"
+    }
+  ],
+  "require": {
+    "php": "^7.1"
+  },
   "autoload":{
     "psr-4": {"iRestMyCase\\": "src/iRestMyCase"}
   }

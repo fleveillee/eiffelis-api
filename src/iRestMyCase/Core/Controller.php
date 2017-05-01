@@ -8,7 +8,6 @@
 
 namespace iRestMyCase\Core;
 
-use iRestMyCase\Core\Interfaces\DaoInterface;
 use iRestMyCase\Core\Models\Config;
 
 /**
@@ -34,29 +33,34 @@ class Controller
 
 	/**
 	 * Run a Rest service action
-	 * @param object       $model
-	 * @param DaoInterface $dao
+	 * @param object $model
 	 */
-	public function restAction($model, DaoInterface $dao)
+	public function restAction($model)
 	{
 		$httpMethod = $_SERVER['REQUEST_METHOD'];
 
 		switch ($httpMethod) {
 			case 'PUT':
-				$dao->update($model);
+				Renderer::renderJsonResponse(ORM::update($model));
 				break;
 			case 'POST':
-				$dao->create($model);
+				Renderer::renderJsonResponse(ORM::create($model));
 				break;
 			case 'GET':
-				$dao->read($model);
+				Renderer::renderJsonResponse(ORM::read($model));
 				break;
 			case 'HEAD':
-				$dao->read($model);
-				//TODO: send 200 header if found, 404 header if not found (no response body)
+				//Send 200 header if found, 404 header if not found (no response body)
+				$results = ORM::read($model);
+				if (empty($results)) {
+					header('HTTP/1.1 404 NOT FOUND');
+				} else {
+					header('HTTP/1.1 200 OK');
+					header('Content-Type: application/json');
+				}
 				break;
 			case 'DELETE':
-				$dao->delete($model);
+				Renderer::renderJsonResponse(ORM::delete($model));
 				break;
 			case 'OPTIONS':
 				// TODO: send options response

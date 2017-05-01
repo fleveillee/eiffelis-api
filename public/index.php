@@ -4,11 +4,11 @@
 
 require __DIR__ . '/../vendor/autoload.php';
 
-$config = parse_ini_file('../config.ini', true);
-
 use iRestMyCase\Core\Dispatcher;
 use iRestMyCase\Core\Models\Config;
 
-Config::load($config);
+// Load Configuration
+Config::load(parse_ini_file(__DIR__ . '/../config.ini', true));
 
+// Render URI
 Dispatcher::renderUri($_SERVER['REQUEST_URI']);

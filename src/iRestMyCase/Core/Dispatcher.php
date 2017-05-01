@@ -59,27 +59,24 @@ class Dispatcher
 	 */
 	public static function attemptRestAction($splitUri)
 	{
-		$appName = Config::appName();
 		$modelName = $splitUri[0];
-		$className = $appName . '\\PublicModels\\' . $modelName;
 
-		if (class_exists($className)) {
+		if (ORM::modelExists($modelName)) {
 			try {
-				$dao = DAO::getDAO($className::DAO);
+				if (empty($splitUri[1])) {
+					$modelInstance = ORM::getModelInstance($modelName);
+				} else {
+					$modelInstance = ORM::getModelInstanceFromPrimaryKey($modelName, $splitUri[1]);
+				}
+
+				$controller = new Controller();
+				$controller->restAction($modelInstance);
 			} catch (Exception $exception) {
 				Renderer::renderHttpErrorResponse(500, $exception->getMessage());
-
-				return;
 			}
-
-			$model = new $className();
-
-			$controller = new Controller();
-			$controller->restAction($model, $dao);
 		} else {
 			throw new Exception("Model Not Found \"$modelName\"", 404);
 		}
-
 	}
 
 

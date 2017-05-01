@@ -4,7 +4,7 @@ namespace iRestMyCase\ModelGenerator;
 
 use Exception;
 
-use iRestMyCase\Core\DAO;
+use iRestMyCase\Core\ORM;
 use iRestMyCase\Core\Renderer;
 use iRestMyCase\Core\Models\Config;
 
@@ -32,8 +32,7 @@ class Controller
 		if (isset($_POST["dao"])) {
 			$daoName = $_POST["dao"];
 			try {
-				$dao = DAO::getDAO($daoName);
-				$params["models"] = $dao->getModelNames();
+				$params["models"] = ORM::getAvailableModelNames($daoName);
 				$params["selectedDao"] = $daoName;
 			} catch (Exception $exception) {
 				Renderer::renderHttpErrorResponse(404, $exception->getMessage());
@@ -43,15 +42,13 @@ class Controller
 		}
 
 		// If models were selected, generate them
-		if (isset($_POST["models"]) && isset($dao)) {
+		if (isset($_POST["models"]) && isset($daoName)) {
 			$models = $_POST["models"];
 			$params["selectedModels"] = $models;
 
-			//Utilities::generateModelsFromMySQLTables();
-
 			foreach ($models as $key => $modelName) {
 				try {
-					Utilities::generateModel($dao, $modelName, $key);
+					Utilities::generateModel($daoName, $modelName, $key);
 				} catch (Exception $e) {
 					// TODO: Manage unknown DAO exception
 				}

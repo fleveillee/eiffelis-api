@@ -7,6 +7,7 @@ use Exception;
 
 use iRestMyCase\Core\DAO\MySQL;
 use iRestMyCase\Core\Models\Config;
+use iRestMyCase\Core\ORM;
 
 /**
  * Class Utilities
@@ -16,12 +17,13 @@ class Utilities
 {
 	/**
 	 * Generates a PHP class model instance from a MySQL schema table
-	 * @param MySQL $dao
 	 * @param       $modelName
 	 * @param       $tableName
 	 */
-	public static function generateModelFromMySQL(MySQL $dao, string $modelName, string $tableName)
+	public static function generateModelFromMySQL(string $modelName, string $tableName)
 	{
+		/** @var MySQL $dao */
+		$dao = ORM::getDAOinstance('MySQL');
 		$tableDesc = $dao->getTableDesc($tableName);
 
 		$ModelGenerator = new ModelGenerator($tableName, $tableDesc->columns());
@@ -39,16 +41,16 @@ class Utilities
 
 	/**
 	 * Dispatcher for Generating a PHP class Model based on its corresponding DAO
-	 * @param $dao
+	 * @param $daoName
 	 * @param $modelName
 	 * @param $key
 	 * @throws Exception
 	 */
-	public static function generateModel($dao, $modelName, $key)
+	public static function generateModel(string $daoName, string $modelName, string $key)
 	{
 
-		if ($dao instanceof MySQL) {
-			self::generateModelFromMySQL($dao, $modelName, $key);
+		if ($daoName == 'MySQL') {
+			self::generateModelFromMySQL($modelName, $key);
 		} else {
 			throw new Exception("Unknow DAO for $modelName");
 		}

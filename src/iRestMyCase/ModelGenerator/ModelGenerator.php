@@ -97,7 +97,7 @@ namespace  $namespace;
 
 use Exception;
 
-class $this->className$classExtends
+class $this->className$classExtends implements \\JsonSerializable
 {";
 
 	}
@@ -127,9 +127,21 @@ class $this->className$classExtends
 
 	public function getClassClosure()
 	{
-		return "
+		return '
+		
+	/**
+	 * JsonSerializable Method implementation for the PHP json_encode() function
+	 * It is needed since properties of the model are not public
+	 *
+	 * @return array
+	 */
+	public function jsonSerialize()
+	{
+		return get_object_vars($this);
+	}
+		
 }
-";
+';
 	}
 
 
@@ -145,20 +157,8 @@ class $this->className$classExtends
 				$enumConst .= "	const $constName = [$column[EnumValuesString]];\n";
 			}
 
-			$propertyValue = '';
-			if (!empty($column['Default'])) {
-				if (in_array($column['ShortType'], array_merge(self::$_stringTypes, self::$_enumTypes))) {
-					$propertyValue = " = '$column[Default]'";
-				} else {
-					$propertyValue = " = $column[Default]";
-				}
-			} elseif (in_array($column['ShortType'],
-					self::$_stringTypes) && $column['Null'] == 'NO' && empty($column['Key'])
-			) {
-				$propertyValue = " = ''";
-			}
 			$propertiesContent .= "
-	protected \$$column[Field]$propertyValue;";
+	protected \$$column[Field];";
 		}
 
 		return $enumConst . "\n" . $propertiesContent . "\n";
@@ -169,7 +169,7 @@ class $this->className$classExtends
 	{
 		$methodsContent = "
 
-	public function __construct(\$param=NULL)
+	public function __construct(\$param = null)
 	{
 ";
 
@@ -258,7 +258,7 @@ class $this->className$classExtends
 
 
 			$methodsContent .= "
-	public function $column[Field](\$value = NULL)
+	public function $column[Field](\$value = null)
 	{
 		if(!empty(\$value)$valueCheck){
 			\$this->$column[Field] = $typecastBegin\$value$typecastEnd;
